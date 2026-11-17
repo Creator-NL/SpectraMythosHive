@@ -1,0 +1,41 @@
+name: Spectra Mythos Hive CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke-test:
+    name: ${{ matrix.os }} (Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+        python-version: [ '3.10', '3.11' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install CPU PyTorch and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -r requirements.txt
+
+      - name: Verify Python syntax compilation
+        run: |
+          python -m py_compile hive_common.py hive_server.py hive_worker.py hive_worker_phase2.py test_model.py test_model_phase2.py Tools/eval_mythos.py Tools/checkpoint_diff.py Tools/plot_training_log.py OpenMythos/open_mythos/__init__.py OpenMythos/open_mythos/main.py OpenMythos/open_mythos/tokenizer.py OpenMythos/open_mythos/variants.py tests/test_hive_smoke.py
+
+      - name: Run CPU smoke & guardrail unit tests
+        run: |
+          python -m unittest discover -s tests -v

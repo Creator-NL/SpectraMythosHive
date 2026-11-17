@@ -1,0 +1,20 @@
+# ==============================================================================
+# Spectra Mythos Hive — Runtime Dependencies
+#
+# NOTE ON PYTORCH + CUDA:
+# Install PyTorch with CUDA support FIRST before installing this file so pip
+# does not fall back to a CPU-only build:
+#   - RTX 20 / 30 / 40 series:
+#       pip install torch --index-url https://download.pytorch.org/whl/cu126
+#   - RTX 50 series (Blackwell, CUDA 12.8+ / 13.x):
+#       pip install torch --index-url https://download.pytorch.org/whl/cu128
+#     (or PyTorch nightly cu132 if required by your GPU/driver)
+# ==============================================================================
+
+fastapi>=0.115.0
+uvicorn>=0.30.0
+python-multipart>=0.0.9
+requests>=2.31.0
+transformers>=4.40.0
+datasets>=2.18.0
+matplotlib>=3.8.0
